@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.systemicr2</groupId>
-	<artifactId>dtfutbol</artifactId>
+	<artifactId>Football-Club-Management-API</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
+	<name>Football Club Management API</name>
 	<description/>
 	<url/>
 	<licenses>
