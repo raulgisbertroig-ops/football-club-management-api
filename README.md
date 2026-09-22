@@ -27,11 +27,17 @@ Service: Contains the application and business logic.
 Repository: Manages data persistence through Spring Data JPA.
 MySQL: Stores the application data.
 
-Main layers
-Controller: Handles HTTP requests and responses.
-Service: Contains the application and business logic.
-Repository: Manages data persistence through Spring Data JPA.
-MySQL: Stores the application data.
+
+### Y justo después añade:
+
+```markdown
+## 📌 Current Status
+
+The project is currently under active development as part of my backend learning process.
+
+The current MVP includes the core domain model, relational entities, business logic, REST endpoints, persistence with JPA/Hibernate and basic automated testing.
+
+Further improvements will be added progressively.
 
 ## 🚀 Despliegue Local (Setup)
 1. **Clonar el repositorio:**
