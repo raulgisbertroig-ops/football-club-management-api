@@ -6,13 +6,32 @@
 - **Construcción y Dependencias:**Maven
 - **Testing de Red:**Postman
 
-## ⚙️ Arquitectura y Estado Actual (MVP - Fase 1)
-Actualmente, el sisttema implementa la capa de Dominio y Servicio para un CRUD relacional asegurando la integridad referencial (Foreign Keys). La topologia de entidades se estructura de la siguiente manera:
-* "Club" (entidad Raíz)
-* "Team" (Equipos vinculados a un club mediante relacionship 1:N)
-*  "Player" y "TrainingSession" (Vinculados a su respectivo equipo)
+## 🏗️ Architecture
 
-El diseño prioriza la encapsulación, delegando la lógica de negocio a la capa "@Service" e inyectando dependencias mediante el contenedor del IoC de Spring Boot.
+The application follows a layered architecture that separates HTTP handling, business logic, persistence and database access.
+
+```text
+Client
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Repository
+   ↓
+MySQL
+
+Main layers
+Controller: Handles HTTP requests and responses.
+Service: Contains the application and business logic.
+Repository: Manages data persistence through Spring Data JPA.
+MySQL: Stores the application data.
+
+Main layers
+Controller: Handles HTTP requests and responses.
+Service: Contains the application and business logic.
+Repository: Manages data persistence through Spring Data JPA.
+MySQL: Stores the application data.
 
 ## 🚀 Despliegue Local (Setup)
 1. **Clonar el repositorio:**
