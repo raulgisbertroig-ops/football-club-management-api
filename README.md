@@ -17,4 +17,4 @@ El diseño prioriza la encapsulación, delegando la lógica de negocio a la capa
 ## 🚀 Despliegue Local (Setup)
 1. **Clonar el repositorio:**
    '''bash
-   git clone [https://github.com/raulgisbertroig-ops/dtfutbol.git](https://github.com/raulgisbertroig-ops/dtfutbol.git)
+  git clone https://github.com/raulgisbertroig-ops/football-club-management-api.git
