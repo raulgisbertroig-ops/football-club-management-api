@@ -1,0 +1,34 @@
+package com.systemicr2.footballclubmanagementapi.controller;
+
+import com.systemicr2.footballclubmanagementapi.model.Team;
+import com.systemicr2.footballclubmanagementapi.service.TeamService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/teams")
+@RequiredArgsConstructor // <--INYECCIÓN DE LOMBOK AÑADIDA
+public class TeamController {
+
+    private final TeamService teamService;
+
+    @PostMapping
+    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
+        Team savedTeam = teamService.createTeam(team);
+        return new ResponseEntity<>(savedTeam, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Team> updateTeam(@PathVariable Long id, @RequestBody Team team) {
+        return new ResponseEntity<>(teamService.updateTeam(id, team), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Team>> getAllTeams() {
+        return new ResponseEntity<>(teamService.getAllTeams(), HttpStatus.OK);
+    }
+}
