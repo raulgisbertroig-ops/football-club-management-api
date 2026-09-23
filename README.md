@@ -54,6 +54,29 @@ The relationships between the entities are modelled using JPA/Hibernate.
 
 ## 🔗 API Endpoints
 
+### Authentication
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/login` | Authenticate a user and return a JWT token |
+| POST | `/api/auth/register` | Register a new user |
+
+### Clubs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/clubs` | Create a new club |
+| GET | `/api/clubs` | Get all clubs |
+| GET | `/api/clubs/{id}` | Get a club by ID |
+
+### Teams
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/teams` | Create a new team |
+| PUT | `/api/teams/{id}` | Update a team |
+| GET | `/api/teams` | Get all teams |
+
 ### Players
 
 | Method | Endpoint | Description |
@@ -66,7 +89,33 @@ The relationships between the entities are modelled using JPA/Hibernate.
 | PUT | `/api/players/{id}` | Update a player |
 | DELETE | `/api/players/{id}` | Delete a player |
 
-Additional controllers are available for authentication, clubs, teams, matches, standings, call-ups and training sessions.
+### Matches
+
+| Method | Endpoint | Description |
+|---|---|---|
+| PUT | `/api/matches/{id}/score` | Update the score of a match |
+
+### Call-ups
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/callups` | Add a player call-up to a match |
+
+### Standings
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/standings` | Get the current league standings |
+
+### Training Sessions
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/trainings` | Create a training session |
+| GET | `/api/trainings` | Get training sessions with pagination |
+| PUT | `/api/trainings/{id}` | Update a training session |
+| DELETE | `/api/trainings/{id}` | Delete a training session |
+| GET | `/api/trainings/attendance` | Get training attendance statistics |
 
 ## 📌 Current Status
 
