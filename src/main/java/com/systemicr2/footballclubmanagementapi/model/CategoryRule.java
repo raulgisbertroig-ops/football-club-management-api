@@ -21,7 +21,7 @@ public class CategoryRule {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Modality modality; //F7, F11, FUTSAL
+    private Modality modality; //F7, F8, F11, FUTSAL
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

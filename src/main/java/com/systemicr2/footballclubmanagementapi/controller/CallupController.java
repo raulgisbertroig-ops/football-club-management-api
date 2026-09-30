@@ -22,7 +22,7 @@ public class CallupController {
     // (Long matchId, String playerId, boolean isStarter, int minutesPlayed).
     public ResponseEntity<Callup> addCallup(
             @RequestParam Long matchId,
-            @RequestParam String playerId,
+            @RequestParam Long playerId,
             @RequestParam boolean isStarter,
             @RequestParam int minutesPlayed) {
 

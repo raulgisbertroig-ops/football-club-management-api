@@ -19,7 +19,7 @@ public class CallupService {
     private final PlayerRepository playerRepository;
 
     @Transactional
-    public Callup addPlayerToMatch(Long matchId, String playerId, boolean isStarter, int minutesPlayed) {
+    public Callup addPlayerToMatch(Long matchId, Long playerId, boolean isStarter, int minutesPlayed) {
 
 
         // REQUERIMIENTO 1: Busca el partido (Match) usando matchRepository.
@@ -32,6 +32,20 @@ public class CallupService {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado con ID:" + playerId));
 
+        // --- NUEVA REGLA: Validación de limite de titulares ---
+        if (isStarter) {
+            // Escudo anti-NPE
+            if (match.getCategoryRule() == null || match.getCategoryRule().getModality() == null) {
+                throw new RuntimeException("Partido no tiene una modalidad válida configurada.");
+            }
+            int titularesActuales = callupRepository.countByMatchIdAndIsStarter(matchId, true);
+            String tipoPartido = match.getCategoryRule().getModality().name();
+            int limiteTitulares = obtenerLimiteTitulares(tipoPartido);
+            if (titularesActuales >= limiteTitulares) {
+                throw new RuntimeException("No se pueden exceder los " + limiteTitulares + " titulares para este partido.");
+            }
+        }
+
         // REQUERIMIENTO 3: Instancia en una nueva Callup (new Callup())
         // y asignale el partido, el jugador, si es titular y los minutos jugados.
         Callup callup = new Callup();
@@ -43,6 +57,16 @@ public class CallupService {
         // REQUERIMIENTO 4: Guarda la convocatoria en la base de datos usando callupRepository
         // y retorna el objeto guardado.
        return callupRepository.save(callup);
+    }
+    // Método auxiliar para gestionar las modalidades
+    private int obtenerLimiteTitulares(String matchType) {
+        if (matchType == null) return 11; // Por defecto
+        return switch (matchType.toUpperCase()) {
+            case "F7" -> 7;
+            case "F8" -> 8;
+            case "F11" -> 11;
+            default -> 11;
+        };
     }
 }
 

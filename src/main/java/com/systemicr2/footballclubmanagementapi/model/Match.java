@@ -38,6 +38,7 @@ public class Match {
     @Column(name = "away_goals")
     private Integer awayGoals;
 
+
     // Propagación para evitar huérfanos
     // private java.util.List<MatchEvent> events;
 

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CallupRepository extends JpaRepository<Callup, Long>{
+    int countByMatchIdAndIsStarter(Long matchId, boolean isStarter);
 }
+

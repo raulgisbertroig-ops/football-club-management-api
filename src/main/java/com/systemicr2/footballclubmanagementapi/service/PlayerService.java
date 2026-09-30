@@ -28,7 +28,7 @@ public class PlayerService {
     @Transactional
     public Player addTrainingToPlayer(String dni, Long trainingId) {
         // 1. Buscamos al jugador por su DNI
-        Player player = playerRepository.findById(dni).orElseThrow();
+        Player player = playerRepository.findByDni(dni).orElseThrow();
 
         // 2. Buscamos el entrenamiento por su ID
         TrainingSession trainingSession = trainingSessionRepository.findById(trainingId).orElseThrow();
@@ -70,14 +70,15 @@ public class PlayerService {
         return playerRepository.findByTeamId(teamId);
     }
 
-    public Player getPlayerById(String Id) {
+    public Player getPlayerById(Long Id) {
         return playerRepository.findById(Id)
                 .orElseThrow(() -> new RuntimeException("Error: Jugador no encontrado en el sistema"));
     }
 
     @Transactional
     public com.systemicr2.footballclubmanagementapi.dto.PlayerResponseDTO getPlayerDTO(String dni) {
-        Player player = getPlayerById(dni);
+        Player player = playerRepository.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Error: Jugador no encontrado por DNI"));
         com.systemicr2.footballclubmanagementapi.dto.PlayerResponseDTO dto = new com.systemicr2.footballclubmanagementapi.dto.PlayerResponseDTO();
 
         dto.dni = player.getDni();
@@ -102,7 +103,7 @@ public class PlayerService {
     }
 
 
-    public Player updatePlayer(String id, Player playerDetails) {
+    public Player updatePlayer(Long id, Player playerDetails) {
 
         // 1. I/O: Cargamos el estado inmutable desde el disco duro a la RAM.
         Player existingPlayer = getPlayerById(id);
@@ -118,7 +119,7 @@ public class PlayerService {
     }
 
     // --- DESTRUCCIÓN DE DATOS ---
-    public void deletePlayer(String id) {
+    public void deletePlayer(Long id) {
 
         // 1. Verificación de existencia: Reutilizamos tu método interno.
         // Si no existe, este método ya lanza un RuntimeException controlado.

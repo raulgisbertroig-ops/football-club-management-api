@@ -15,10 +15,12 @@ import java.util.List;
 public class Player {
 
     @Id // Marca este campo como la Primary Key de la tabla (Complejidad O(1) en búsquedas directas)
-    @Column(nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // Nueva Clave Subrogada
 
     @NotBlank(message = "El DNI es obligatorio")
-    private String dni;
+    @Column(nullable = false, unique = true)
+    private String dni; // Sigue siendo único, pero ya no es el ID
 
     @Column(name = "salary", precision = 10, scale = 2)
     private BigDecimal monthlySalary;

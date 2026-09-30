@@ -59,13 +59,13 @@ public class PlayerController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Player> updatePlayer(@PathVariable String id, @RequestBody Player playerDetails) {
+    public ResponseEntity<Player> updatePlayer(@PathVariable Long id, @RequestBody Player playerDetails) {
         return new ResponseEntity<>(playerService.updatePlayer(id, playerDetails), HttpStatus.OK);
 
     }
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable String id) {
+    public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
         playerService.deletePlayer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
     }

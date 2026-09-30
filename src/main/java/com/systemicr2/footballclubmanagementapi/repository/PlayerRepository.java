@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List; // Importación crítica
 
 @Repository
-public interface PlayerRepository extends JpaRepository<Player, String> {
+public interface PlayerRepository extends JpaRepository<Player, Long> {
     List<Player> findByTeamId(Long teamId);
+
+    java.util.Optional<Player> findByDni(String dni);
 
 }
