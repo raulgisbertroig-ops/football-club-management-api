@@ -6,4 +6,6 @@ public enum EventType {
     YELLOW_CARD,
     RED_CARD,
     INJURY,
+    SUBSTITUTION_IN,
+    SUBSTITUTION_OUT,
 }

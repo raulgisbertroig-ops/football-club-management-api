@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface CallupRepository extends JpaRepository<Callup, Long>{
     int countByMatchIdAndIsStarter(Long matchId, boolean isStarter);
+    boolean existsByMatchIdAndPlayerId(Long matchId, Long playerId);
     List<Callup> findByPlayerId(Long playerId);
 }
 
