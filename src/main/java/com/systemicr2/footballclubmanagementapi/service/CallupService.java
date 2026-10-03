@@ -7,11 +7,13 @@ import com.systemicr2.footballclubmanagementapi.repository.CallupRepository;
 import com.systemicr2.footballclubmanagementapi.repository.MatchRepository;
 import com.systemicr2.footballclubmanagementapi.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j // MOTOR DE LOGS
 public class CallupService {
 
     private final CallupRepository callupRepository;
@@ -20,7 +22,7 @@ public class CallupService {
 
     @Transactional
     public Callup addPlayerToMatch(Long matchId, Long playerId, boolean isStarter, int minutesPlayed) {
-
+        log.info("Iniciando proceso de convocatoria para el jugador ID: {} en el partido ID: {}", playerId, matchId);
 
         // REQUERIMIENTO 1: Busca el partido (Match) usando matchRepository.
         // Si no existe, lanza un RuntimeException("Partido no encontrado")
@@ -46,6 +48,9 @@ public class CallupService {
             }
         }
 
+        if (minutesPlayed < 0) {
+            log.warn("El jugador ID: {} tiene minutos negativos ({}). Revisa los datos de entrada.", playerId, minutesPlayed);
+        }
         // REQUERIMIENTO 3: Instancia en una nueva Callup (new Callup())
         // y asignale el partido, el jugador, si es titular y los minutos jugados.
         Callup callup = new Callup();
@@ -56,8 +61,16 @@ public class CallupService {
 
         // REQUERIMIENTO 4: Guarda la convocatoria en la base de datos usando callupRepository
         // y retorna el objeto guardado.
-       return callupRepository.save(callup);
+        try {
+            Callup savedCallup = callupRepository.save(callup);
+            log.info("Jugador ID: {} convocado exitosamente. Titular: {}", playerId, isStarter);
+            return savedCallup;
+        } catch (Exception e) {
+            log.error("Error crítico al guardar la convocatoria del jugador ID: {}. Causa: {}", playerId, e.getMessage());
+            throw new RuntimeException("Error en base de datos al guardar la convocatoria");
+        }
     }
+
     // Método auxiliar para gestionar las modalidades
     private int obtenerLimiteTitulares(String matchType) {
         if (matchType == null) return 11; // Por defecto
