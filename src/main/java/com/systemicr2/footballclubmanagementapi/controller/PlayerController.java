@@ -1,8 +1,10 @@
 package com.systemicr2.footballclubmanagementapi.controller;
 
 import com.systemicr2.footballclubmanagementapi.dto.PlayerResponseDTO;
+import com.systemicr2.footballclubmanagementapi.dto.PlayerStatsDTO;
 import com.systemicr2.footballclubmanagementapi.model.Player;
 import com.systemicr2.footballclubmanagementapi.service.PlayerService;
+import com.systemicr2.footballclubmanagementapi.service.PlayerStatsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 public class PlayerController {
 
     private final PlayerService playerService;
+    private final PlayerStatsService playerStatsService;
 
     // CREATE PLAYER (Zero Trust Network Layer)
     @PostMapping("/team/{teamId}")
@@ -62,10 +65,21 @@ public class PlayerController {
         return new ResponseEntity<>(playerService.updatePlayer(id, playerDetails), HttpStatus.OK);
 
     }
+
     // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
         playerService.deletePlayer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+    }
+
+    // ENDPOINT: Obtener las estadisticas totales de un jugador
+    @GetMapping("/{playerId}/stats")
+    public ResponseEntity<PlayerStatsDTO> getPlayerStats(@PathVariable Long playerId) {
+        // 1. Llamamos a tu motor recién creado
+        PlayerStatsDTO stats = playerStatsService.getPlayerStats(playerId);
+
+        // 2. Devolvemos el imnforme DTO al cliente con un 200 OK
+        return ResponseEntity.ok(stats);
     }
 }
