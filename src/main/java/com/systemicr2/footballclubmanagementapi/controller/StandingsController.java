@@ -1,5 +1,6 @@
 package com.systemicr2.footballclubmanagementapi.controller;
 
+import com.systemicr2.footballclubmanagementapi.dto.LeagueStandingDTO;
 import com.systemicr2.footballclubmanagementapi.dto.TeamStandingDto;
 import com.systemicr2.footballclubmanagementapi.service.StandingsService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ public class StandingsController {
 
     // T-59: Endpoint GET para consultar la clasificación
     @GetMapping
-    public ResponseEntity<List<TeamStandingDto>> getLeagueStandings() {
-        List<TeamStandingDto> standings = standingsService.calculateLeagueStandings();
+    public ResponseEntity<List<LeagueStandingDTO>> getLeagueStandings() {
+        List<LeagueStandingDTO> standings = standingsService.calculateLeagueStandings();
 
         // Retornamos un estado 200 OK con la lista de clasificación en el cuerpo
         return ResponseEntity.ok(standings);
