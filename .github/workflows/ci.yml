@@ -20,6 +20,6 @@ jobs:
           cache: maven
 
       - name: Run Tests and Build
-        run: |
-        chmod +x mvnw
-        ./mvnw clean install
+          run: |
+            chmod +x mvnw
+            ./mvnw clean install
