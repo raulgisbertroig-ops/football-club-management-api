@@ -23,20 +23,20 @@ import static org.mockito.Mockito.*;
 class CallupServiceTest {
 
     @Mock
-    private CallupRepository callupRepository;
+    private CallupRepository callupRepository; // Sustituye Object por tu CallupRepository real
     @Mock
     private MatchRepository matchRepository;
     @Mock
     private PlayerRepository playerRepository;
 
     @InjectMocks
-    private CallupService callupService;
+    private CallupService callupService; // El servicio real donde se inyectan los mocks
 
     @Test
     void shouldThrowExceptionWhenTeamExceedsStartersLimit() {
         // 1. ARRANGE
         Long matchId = 1L;
-        Long playerId = 2L; // Ahora es un Long
+        Long playerId = 2L;
 
         CategoryRule rule = new CategoryRule();
         rule.setModality(Modality.F7);
@@ -53,11 +53,42 @@ class CallupServiceTest {
         when(playerRepository.findById(playerId)).thenReturn(Optional.of(player));
         when(callupRepository.countByMatchIdAndIsStarter(matchId, true)).thenReturn(7);
 
-        // 2. ACT & 3. ASSERT
+        // 2. ACT & ASSERT (Verificamos que lanza la excepción esperada)
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             callupService.addPlayerToMatch(matchId, playerId, true, 90);
         });
 
         assertTrue(exception.getMessage().contains("No se pueden exceder los 7 titulares"));
+    }
+
+    @Test
+    void shouldAddPlayerToMatchSuccessfullyWhenUnderStartersLimit() {
+        // 1. ARRANGE
+        Long matchId = 1L;
+        Long playerId = 2L;
+
+        CategoryRule rule = new CategoryRule();
+        rule.setModality(Modality.F7);
+
+        Match match = new Match();
+        match.setId(matchId);
+        match.setCategoryRule(rule);
+
+        Player player = new Player();
+        player.setId(playerId);
+        player.setDni("12345678Z");
+
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
+        when(playerRepository.findById(playerId)).thenReturn(Optional.of(player));
+        // Simulamos que hay 5 titulares (dentro del límite de 7)
+        when(callupRepository.countByMatchIdAndIsStarter(matchId, true)).thenReturn(5);
+
+        // 2. ACT (Verificamos que NO lanza excepciones)
+        assertDoesNotThrow(() -> {
+            callupService.addPlayerToMatch(matchId, playerId, true, 90);
+        });
+
+        // 3. ASSERT (Verificamos que se guardó en la base de datos simulada)
+        verify(callupRepository, times(1)).save(any(Callup.class));
     }
 }
