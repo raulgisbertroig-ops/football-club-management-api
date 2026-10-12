@@ -1,0 +1,24 @@
+services:
+# CONTENEDOR 1: La Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: footballclubmanagementapi-mysql
+    ports:
+      - "3307:3306" # Lo exponemos en el 3307 para que no choque con la MySQL de Windows
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: footballclubmanagement_core
+
+  # CONTENEDOR 2: Mi API REST
+  api:
+    image: footballclubmanagement-api:latest #Uso la imagen que acabas de crear
+    container_name: footballclubmanagement-api
+    ports:
+      - "8080:8080" # Expone el puerto web
+    depends_on:
+      - db # Obliga a que la API espera a que MySQL arranque primero
+    environment:
+      # Sobrescribimos el application.properties inyectando variables de entorno
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/footballclubmanagement_core?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
