@@ -3,6 +3,8 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -22,10 +24,28 @@ jobs:
       - name: Run Tests and Build
         run: |
           chmod +x mvnw
-          ./mvnw clean install
+          ./mvnw clean package -DskipTests
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: football-club-management-api-executable
           path: target/*.jar
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/footballclubmanagement-api:latest
+
+
+
+

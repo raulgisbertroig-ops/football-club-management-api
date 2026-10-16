@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtil {
 
     // 1. Clave secreta (Debe ser muy larga para el algoritmo HS256)
-    // En el futuro , esto no se pondra en el cçodigo, sino en variables de entorno ocultas.
+    // En el futuro , esto no se pondra en el codigo, sino en variables de entorno ocultas.
     private final String SECRET_KEY = "footballclubmanagementapi_secreta_super_segura_para_dam_2026_minimo_32_caracteres";
 
     // 2. Tiempo de expiración (Ejemplo: 10 horas en milisegundos)
@@ -41,5 +41,25 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject(); // Recupera el "username· que guardamos en el Payload
+    }
+    // 6. Lector de caducidad: Extrae la fecha de expiración de la pulsera VIP
+    public Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
+    // 7. Auxiliar: Comprueba si la fecha de expiración es anterior a este instante
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    // 8. Validador oficial (T-81): Comprueba que el usuario coincide y el token no ha caducado
+    public boolean validateToken(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && isTokenExpired(token));
     }
 }

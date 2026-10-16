@@ -3,16 +3,13 @@ package com.systemicr2.footballclubmanagementapi.config;
 import com.systemicr2.footballclubmanagementapi.util.JwtUtil;
 // Asegúrate de importar tu servicio de usuarios
 import com.systemicr2.footballclubmanagementapi.service.CustomUserDetailsService;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 @Component
@@ -35,17 +32,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // 3. Buscamos la cabecera "Authorizadción" en la petición que esta entrando
         final String authorizationHeader = request.getHeader("Authorization");
-        System.out.println(">>> CABECERA EXACTA RECIBIDA: {" + authorizationHeader + "]");
+        System.out.println(">>> CABECERA EXACTA RECIBIDA: {" + authorizationHeader + "}");
 
         String username = null;
+        String jwt = null;
 
         // 4. Comprobamos si la cabecera existe y si cumple la regla de empezar por "Bearer"
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
-            // Recortamos los primeros 7 caracteres ("Bearer") para quedarnos solo en el código puro
-            String jwt = authorizationHeader.substring(7);
-
-            // Usamos nuestra máquina para leer quén es el dueño de la pulsera
-            username = jwtUtil.extractUsername(jwt);
+            jwt = authorizationHeader.substring(7); // <-- 2. Le asignamos valor aquí
+            try {
+                username = jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                logger.error("No se pudo extraer el username del token JWT", e);
+            }
         }
 
         // 5. Si el Token tenía un usuario, pero Spring aún no lo ha registrado en esta petición...
@@ -55,13 +54,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             org.springframework.security.core.userdetails.UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             // 5.2 Creamos el pase oficial de Spring Security (El sello en la mano)
-            org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken =
-                    new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+            if (jwtUtil.validateToken(jwt, userDetails)) {
 
-            // 5.3 Le ponemos el pase al usuario en el contexto de seguridad actual
-            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
+                org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken =
+                        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
+                // Adjuntamos detalles de red de la petición HTTP (IP, sesión etc.)
+                authToken.setDetails(new org.springframework.security.web.authentication.WebAuthenticationDetailsSource().buildDetails(request));
+
+                org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                // 5.3 Le ponemos el pase al usuario en el contexto de seguridad actual
+                org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
 
         // --- EN EL PRÓXIMO PASO: VALIDAREMOS AL USUARIO AQUÍ ---

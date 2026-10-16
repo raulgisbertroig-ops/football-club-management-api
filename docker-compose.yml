@@ -8,6 +8,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: footballclubmanagement_core
+    # 1. Añadimos un chequeo de salud para saber cuando MySQL responde
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - footballclubmanagement-network
 
   # CONTENEDOR 2: Mi API REST
   api:
@@ -16,9 +24,18 @@ services:
     ports:
       - "8080:8080" # Expone el puerto web
     depends_on:
-      - db # Obliga a que la API espera a que MySQL arranque primero
+      db: # Obliga a que la API espera a que MySQL arranque primero
+        condition: service_healthy
     environment:
       # Sobrescribimos el application.properties inyectando variables de entorno
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/footballclubmanagement_core?allowPublicKeyRetrieval=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET} # Inyectando desde un archivo .env externo
+      JWT_EXPIRATION_MS: 86400000
+    networks:
+      - footballclubmanagement-network
+
+networks:
+  footballclubmanagement-network:
+          driver: bridge
