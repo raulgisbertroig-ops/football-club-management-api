@@ -6,6 +6,7 @@ import com.systemicr2.footballclubmanagementapi.model.AppUser;
 import com.systemicr2.footballclubmanagementapi.repository.AppUserRepository;
 import com.systemicr2.footballclubmanagementapi.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,16 +51,22 @@ public class AuthController {
 
         // 2. FABRICACIÓN DEL TOKEN
         // Si el paso anterior tuvo éxito, generamos el token JWT con su nombre de usuario.
-        String token = jwtUtil.generateToken(request.getUsername());
+        String token = jwtUtil.generateToken(authentication.getName());
 
-        // 3. RESPUESTA HTTP 200 OK con el Token dentro de la "caja" AuthResnponseDTO
+        // 3. RESPUESTA HTTP 200 OK con el Token dentro de la "caja" AuthResponseDTO
         return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody AuthRequestDTO request) {
+
+        // 1. Barrera de validación: ¿Existe ya este usuario?
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest().body("Error: El nombre de usuario ya esta en uso.");
+        }
         AppUser newUser = new AppUser();
         newUser.setUsername(request.getUsername());
+
         // VITAL: Encrypt the password before saving it to the database
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
 
