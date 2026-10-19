@@ -60,6 +60,6 @@ public class JwtUtil {
     // 8. Validador oficial (T-81): Comprueba que el usuario coincide y el token no ha caducado
     public boolean validateToken(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && isTokenExpired(token));
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
