@@ -46,6 +46,9 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/footballclubmanagement-api:latest
 
+      - name: Trigger Render Deploy
+        run: curl -X POST ${{ secrets.RENDER_DEPOLY_HOOK }}
+
 
 
 
