@@ -47,7 +47,10 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/footballclubmanagement-api:latest
 
       - name: Trigger Render Deploy
-        run: curl -X POST ${{ secrets.RENDER_DEPOLY_HOOK }}
+        env:
+            RENDER_URL: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: curl -X POST "$RENDER_URL"
+
 
 
 
