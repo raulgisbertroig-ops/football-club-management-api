@@ -1,15 +1,16 @@
-# 1. IMAGEN BASE: Un mini-Linux (Alpine) que ya trae Java 21 preinstalado
-FROM eclipse-temurin:21-jre-alpine
-
-# 2. DIRECTORIO DE TRABAJO: Creamos una carpeta llamada /app dentro del contenedor
+# Stage 1: Build the application (The Factory)
+FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
+# Copy all source code and the Maven wrapper
+COPY . .
+# Grant execution permissions to the wrapper and compile the .jar
+RUN chmod +x mvnw
+RUN ./mvnw clean package -DskipTests
 
-# 3. COPIA: Copiamos el artefacto .jar desde tu carpeta target de Windows el contenedor Linux
-# (El asterisco asegura que pille tu  archivo sin importar la version exacta)
-COPY target/*.jar app.jar
-
-# 4. PUERTO: Le decimos a Docker que esta aplicación expone el puerto 8080
+# Stage 2: Run the application (The Server)
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+# Copy the .jar from the "builder" stage above
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-
-# 5. ARRANQUE: El camino exacto que ejecutará el contenedor al encenderse
 ENTRYPOINT ["java", "-jar", "app.jar"]
