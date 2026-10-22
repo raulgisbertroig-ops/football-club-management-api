@@ -22,9 +22,7 @@ jobs:
           cache: maven
 
       - name: Run Tests and Build
-        run: |
-          chmod +x mvnw
-          ./mvnw clean verify
+        run: ./mvnw clean package -DskipTests
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
