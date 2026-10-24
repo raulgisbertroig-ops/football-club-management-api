@@ -6,6 +6,7 @@ import com.systemicr2.footballclubmanagementapi.model.Team;
 import com.systemicr2.footballclubmanagementapi.model.TrainingSession;
 import com.systemicr2.footballclubmanagementapi.repository.TeamRepository;
 import com.systemicr2.footballclubmanagementapi.repository.TrainingSessionRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,9 @@ public class TrainingSessionService {
         );
     }
 
+
     // Mapeo de Actualización (Sobrescritura en BD)
+    @Transactional
     public TrainingResponseDTO updateTrainingSession(Long id, TrainingRequestDTO requestDTO) {
 
         // 1. Verificamos que el entrenamiento original existe.
