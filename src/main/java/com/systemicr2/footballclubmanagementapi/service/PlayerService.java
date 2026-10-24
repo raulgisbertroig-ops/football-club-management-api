@@ -25,21 +25,6 @@ public class PlayerService {
 
     // --- METODOS DE NEGOCIO ---
 
-    @Transactional
-    public Player addTrainingToPlayer(String dni, Long trainingId) {
-        // 1. Buscamos al jugador por su DNI
-        Player player = playerRepository.findByDni(dni).orElseThrow();
-
-        // 2. Buscamos el entrenamiento por su ID
-        TrainingSession trainingSession = trainingSessionRepository.findById(trainingId).orElseThrow();
-
-        // 3. Añadimos el entrenamiento a la lista del jugador
-        player.getTrainingSessions().add(trainingSession);
-
-        // 4. Guad¡rdamos la mutacion en la base de datos
-        return playerRepository.save(player);
-    }
-
     // NUEVO: Motor de creación con barrera financiera y de segfuridad (Patrón Fail-Fast)
     @Transactional
     public Player createPlayer(Player player, Long teamId) {
@@ -86,9 +71,6 @@ public class PlayerService {
         dto.position = player.getPosition();
         dto.teamName = player.getTeam() != null ? player.getTeam().getName() : "Sin Equipo";
 
-        dto.trainingObjectives = player.getTrainingSessions().stream()
-                .map(TrainingSession::getObjective)
-                .toList();
 
         dto.matchesPlayed = player.getMatchesPlayed();
         dto.goalsScored = player.getGoalsScored();

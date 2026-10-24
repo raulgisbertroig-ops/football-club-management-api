@@ -33,13 +33,6 @@ public class PlayerController {
         return new ResponseEntity<>(savedPlayer, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{dni}/trainings/{trainingId}")
-    public ResponseEntity<Player> assignTraining(@PathVariable String dni, @PathVariable Long trainingId) {
-        // Llamamos al servicio pasando el String (dni) y el Long (trainingId)
-        Player updatedPlayer = playerService.addTrainingToPlayer(dni, trainingId);
-        return new ResponseEntity<>(updatedPlayer, HttpStatus.OK);
-    }
-
     // READ (Todos)
     @GetMapping
     public ResponseEntity<List<Player>> getAllPlayers() {
