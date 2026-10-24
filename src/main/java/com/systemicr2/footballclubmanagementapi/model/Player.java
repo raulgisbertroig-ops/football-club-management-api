@@ -52,15 +52,6 @@ public class Player {
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Callup> callups;
 
-    @ManyToMany
-    @JoinTable(
-            name = "player_training",
-            joinColumns = @JoinColumn(name = "training_player_id"),
-            inverseJoinColumns = @JoinColumn(name = "training_session_id")
-    )
-
-    @JsonIgnore
-    private List<TrainingSession> trainingSessions = new java.util.ArrayList<>();
 
     // --- ESTADISTICAS (MVP) ---
     private Integer matchesPlayed = 0; // Valor por defeccto 0 al crear el jugador
